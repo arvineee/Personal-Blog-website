@@ -1,6 +1,7 @@
 ### Create your own Blogging Website
+<br />
 <p align="center">
-<img src="static/homepage.png" alt="homepage" width="150" height="150">
+    <img src="static/hompage.png" alt="homepage" >
 </p>
 
 ## Features
