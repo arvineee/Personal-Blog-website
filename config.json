@@ -2,21 +2,21 @@
     "params":
     {
         "local_server":"True",
-        "local_uri":"mysql+pymysql://root:@localhost/blogs_details",
-        "prod_uri": "mysql+pymysql://root:@localhost/blogs_details",
+        "local_uri":"sqlite:///local.db",
+        "prod_uri": "sqlite:///prod.db",
         "fb_url": "https://www.facebook.com",
-        "tw_url": "https://www.twitter.com",
+        "tw_url": "https://x.com/Arvinefelix?s=09",
         "git_url": "https://www.github.com",
-        "blogger_name":"Kushal Pandey",
-        "blog_heading":"PandeyJi Blogs",
-        "sub_heading":"",
-        "gmail_user":"",
-        "gmail_password":"",
-        "about_text":"I'm Kushal Pandey and you are going to love my blogs. Please share with your friends :)",
+        "blogger_name":"Arvine",
+        "blog_heading":"Arval Trendz",
+        "sub_heading":"trends",
+        "gmail_user":"kiruifelix03@gmail.com",
+        "gmail_password":"xbod caxt ommg zexd",
+        "about_text":"am Arvine :)",
         "no_of_posts": 2,
         "login_image":"loginlogo.svg",
-        "admin_user":"pandey",
-        "admin_password":"pandey1995",
+        "admin_user":"Arval",
+        "admin_password":"Arval123",
         "upload_location":"static"
     
     }

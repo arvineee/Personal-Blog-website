@@ -15,13 +15,15 @@ app.secret_key ="super-secret-key"
 app.config['UPLOAD_FOLDER'] = params['upload_location']
 
 #email configuration to send updates
-app.config.update(
-	MAIL_SERVER = 'smtp.gmail.com',
-	MAIL_PORT = '465',
-	MAIL_USE_SSL = True,
-	MAIL_USERNAME = params['gmail_user'],
-	MAIL_PASSWORD = params['gmail_password']
-)
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'  
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'kiruifelix03@gmail.com'
+app.config['MAIL_PASSWORD'] = 'xbod caxt ommg zexd'
+app.config['MAIL_DEFAULT_SENDER'] = 'kiruifelix03@gmail.com'
+
+
+
 mail = Mail(app)
 
 local_server = params["local_server"]
@@ -190,7 +192,9 @@ def delete(sno):
 	return redirect("/dashboard")
 
 if __name__ == "__main__":
-	app.run(debug=False)
+	with app.app_context():
+		db.create_all()
+	app.run(debug=True)
 
 
 
