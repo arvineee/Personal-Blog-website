@@ -16,27 +16,14 @@
     </div>
   </header>
 
- <!-- flash messages< -->
-{% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-{% for category,message in messages %}
 
-  <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
-  <strong>{{message}}</strong> 
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
-{% endfor %}
-{% endif %}
-{% endwith %}
 
   <!-- Main Content -->
   <div class="container">
     <div class="row">
       <div class="col-lg-8 col-md-10 mx-auto">
         <h1>Add/Edit your blog here</h1>
-        <form name="sentMessage" id="contactForm" action="/edit/{{sno}}" method="post" >
+        <form name="sentMessage" id="contactForm" action="/edit/{{id}}" method="post" >
           <div class="control-group">
             <div class="form-group floating-label-form-group controls">
               <label>Title</label>
