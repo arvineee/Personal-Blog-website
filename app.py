@@ -252,7 +252,7 @@ def login():
 		username = form.username.data
 		password = form.password.data
 		user = User.query.filter_by(username=username).first()
-		if user and user.password==password:
+		if user and user.password_hash==password:
 			login_user(user)
 			return redirect(url_for('home'))
 			flash('Logged in successfully','success')
