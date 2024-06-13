@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}Comment{% endblock %}
+
+{% block body %}
+  <div style="padding-top: 7px;" class="mb-5 container">
+    <div class="row">
+      <div class="col-lg-8 col-md-10 mx-auto">
+        <h2>Add Your Comment here</h2>
+        <form method="POST" action="{{url_for('post_query'}})">
+          {{ form.hidden_tag() }}
+          <div class="form-group">
+            {{ form.comment.label }}
+            {{ form.comment(class="form-control") }}
+          </div>
+          <div class="form-group">
+            {{ form.submit(class="btn btn-primary") }}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

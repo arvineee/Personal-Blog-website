@@ -1,18 +1,18 @@
 {% extends "layout.html" %}
+
 {% block body %}
-{% set fname = "img/"+post.img_file %}
+  {% set fname =  post.img_file %}
+
   <!-- Page Header -->
-  <header class="masthead" style="background-image: url('{{url_for('static',filename=fname)}}')">
+  <header class="masthead" style="background-image: url('{{ url_for('static', filename=fname) }}')">
     <div class="overlay"></div>
     <div class="container">
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
           <div class="post-heading">
-            <h1>{{post['title']}}</h1>
-            <h2 class="subheading">{{post.sub_heading}}</h2>
-            <span class="meta">Posted by
-              <a href="/about">{{params['blogger_name']}}</a>
-              on {{post.date}}</span>
+            <h1>{{ post.title }}</h1>
+            <h2 class="subheading">{{ post.sub_heading }}</h2>
+            <span class="meta">Posted by <a href="/about">{{ params.blogger_name }}</a> on {{ post.date }}</span>
           </div>
         </div>
       </div>
@@ -24,9 +24,43 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
-         {{post['content']}}
+          {{ post.content }}
         </div>
       </div>
     </div>
   </article>
- {% endblock %}
+
+  <!-- Comments Section -->
+  <section>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <h3 class=' mt-5 text-center '><u>Comments</u></h3>
+          <ul>
+            {% for comment in post.comments %}
+              <li>
+                <p>{{ comment.comments }}</p>
+              </li>
+            {% endfor %}
+          </ul>
+          
+          <!-- Comment Form -->
+          <div class="card mt-4">
+            <div class="card-body">
+              <h5 class="card-title">Leave a Comment:</h5>
+              <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                  {{ form.comment(class="form-control", rows=3, placeholder="Enter your comment here") }}
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </form>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </section>
+  
+{% endblock %}

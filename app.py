@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect, flash,url_for
+from flask import Flask, render_template, request, session, redirect, flash,url_for,abort
 from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -10,7 +10,8 @@ from wtforms import StringField,PasswordField,SubmitField,BooleanField,PasswordF
 from wtforms.validators import DataRequired,Email,EqualTo,Length
 from flask_login import login_user,logout_user,LoginManager,login_required
 from flask_login import UserMixin,current_user
-
+from flask import request, jsonify
+from flask_migrate import Migrate
 
 #load the config the file for changable parametes
 with open("config.json",'r') as c:
@@ -28,7 +29,6 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 login_manager.init_app(app)
-
 #email configuration to send updates
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'  
 app.config['MAIL_PORT'] = 587
@@ -49,7 +49,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = params['local_uri']
 
 
 db = SQLAlchemy(app)
-
+migrate = Migrate(app, db)
 
 class Contact(db.Model):
 	"""
@@ -62,6 +62,13 @@ class Contact(db.Model):
 	mes = db.Column(db.String(120), nullable=False)
 	date = db.Column(db.String(12), nullable=False)
 
+class Comment(db.Model):
+         id = db.Column(db.Integer, primary_key=True)
+         comments = db.Column(db.String(200), nullable=False)
+         post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=False)
+
+
+
 class Posts(db.Model):
 	"""
 	Setup sql table "Posts" to store blogs to be displayed on website
@@ -73,6 +80,7 @@ class Posts(db.Model):
 	slug = db.Column(db.String(12), unique=True, nullable=False)
 	img_file = db.Column(db.String(120), nullable=True)
 	date = db.Column(db.String(12), nullable=False)
+	comments = db.relationship('Comment', backref='post', lazy=True)
 
 class User(db.Model,UserMixin):
 	"""
@@ -100,6 +108,7 @@ class User(db.Model,UserMixin):
 		return str(self.id)
 
 
+
 #Registration form
 class RegistrationForm(FlaskForm):
 	username = StringField('Username',validators=[Length(max=15,min=2),DataRequired()])
@@ -113,6 +122,13 @@ class LoginForm(FlaskForm):
 	username = StringField('Username')
 	password = PasswordField("Password")
 	submit = SubmitField("Login")
+
+#Comments form
+class CommentForm(FlaskForm):
+	comment = StringField('Your Comment Here',validators=[Length(min=1,max=200)])
+	submit = SubmitField("Submit")
+
+
 
 @app.route("/") #Homepage
 def home():
@@ -139,11 +155,22 @@ def home():
 
 	return render_template("index.html",params=params,posts=posts,prev=prev, nexxt=nexxt, page=page, last=last)
 
-@app.route("/post/<string:post_slug>", methods=["GET"])
+@app.route("/post/<string:post_slug>", methods=["GET", "POST"])
 def post_query(post_slug):
-	post = Posts.query.filter_by(slug=post_slug).first()
-	return render_template("post.html",params=params, post=post,current_user=current_user)
+    post = Posts.query.filter_by(slug=post_slug).first()
+    if not post:
+        abort(404)  # Return a 404 error if the post does not exist
 
+    form = CommentForm()
+    if form.validate_on_submit():
+        comment = Comment(comments=form.comment.data, post_id=post.id)
+        db.session.add(comment)
+        db.session.commit()
+        flash('Your comment has been posted!', 'success')
+        return redirect(url_for('post_query', post_slug=post_slug))
+
+    comments = Comment.query.filter_by(post_id=post.id).all()
+    return render_template("post.html", post=post, form=form,params=params, comments=comments)
 
 @app.route("/about")
 def about():
@@ -241,8 +268,6 @@ def register():
         flash (f"{form.username.data} has been signed up successfuly", "success")
         login_user(user)
         return redirect(url_for('home'))
-    else:
-       flash("Check the Form fields and try again!","danger")
     return render_template('register.html',params=params, form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -266,6 +291,7 @@ def login():
 def dashboard():
 	posts=Posts.query.all()
 	return render_template("dashboard.html",params=params,posts=posts,current_user=current_user)
+
 
 
 if __name__ == "__main__":
